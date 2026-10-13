@@ -1,0 +1,49 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: gk-login-iam
+  profiles:
+    active: dev
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+# MyBatis Plus 配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# IAM 安全与认证配置 (宇宙中心 IAM)
+iam:
+  jwt:
+    issuer: https://iam.sinopharm.com
+    secret: gk-iam-secure-jwt-secret-key-2026-very-secure-and-long-enough-32bytes
+    access-token-expiration: 7200 # 2 hours in seconds
+    refresh-token-expiration: 604800 # 7 days in seconds
+    id-token-expiration: 7200 # OIDC id_token expiration
+  captcha:
+    expiration: 300 # 5 minutes in seconds
+    width: 130
+    height: 48
+    char-length: 4
+  oidc:
+    auth-code-expiration: 600 # 10 minutes
+    jwk-kid: gk-iam-rsa-key-1
+  risk-engine:
+    enabled: true
+    event-topic: gk_iam_login_audit_events
+    max-failed-attempts-threshold: 3
+    high-risk-score-threshold: 75
